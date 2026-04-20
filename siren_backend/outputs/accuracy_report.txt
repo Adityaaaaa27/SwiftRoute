@@ -1,0 +1,207 @@
+╔══════════════════════════════════════════════════════════════════╗
+║                    SIREN ACCURACY REPORT v2.0                   ║
+║          Signal-Informed Restaurant ETA Network                 ║
+║          Kitchen Prep Time (KPT) Prediction System              ║
+╚══════════════════════════════════════════════════════════════════╝
+
+  Generated: 2026-04-17 21:18:42
+
+======================================================================
+  1. DATASET SUMMARY
+======================================================================
+  Total Orders:         100,000
+  Total Merchants:      1,000
+  Date Range:           2023-01-01 to 2024-12-30
+  Contamination Rate:   37.9% (rider-triggered FORs)
+  IoT Beacon Coverage:  14.0%
+  Cities:               10
+  Cuisines:             10
+
+  ─── KPT Statistics ───
+    True KPT:     mean=21.25, median=20.98, std=7.93
+    Measured KPT: mean=20.00, median=19.78, std=7.61
+
+  ─── Hidden Confounders (not used as model features) ───
+    merchant_skill: mean=0.997, std=0.145
+    This creates irreducible prediction error → models cannot achieve MAE=0
+
+======================================================================
+  2. LAYER 1 — FOR SIGNAL DE-NOISING
+======================================================================
+  Filter Precision:     0.8715
+  Filter Recall:        0.9098
+  Filter F1 Score:      0.8903
+  Filter Rate:          39.5%
+  Bias BEFORE:          -1.2438 min
+  Bias AFTER:           -0.0769 min
+  Label Efficiency:     66.0% labels retained
+  IoT Overrides:        13,979
+
+======================================================================
+  3. LAYER 2 — SIGNAL CORRELATIONS WITH true_kpt_min
+======================================================================
+  NOTE: Layer 2 features are PROXY signals with different coefficients
+  than the true data-generating process. This is by design.
+    rush_multiplier              r = +0.1568  p = 0.00e+00  ***
+    relative_rush                r = +0.0360  p = 4.70e-30  ***
+    rain_kpt_impact              r = +0.0799  p = 3.85e-141  ***
+    cuisine_base_kpt             r = +0.7878  p = 0.00e+00  ***
+    complexity_kpt_penalty       r = +0.2497  p = 0.00e+00  ***
+    google_busyness_index        r = +0.1568  p = 0.00e+00  ***
+    hour_sin                     r = -0.0523  p = 2.00e-61  ***
+    hour_cos                     r = +0.0211  p = 2.40e-11  ***
+    dow_sin                      r = -0.0096  p = 2.50e-03  **
+    dow_cos                      r = -0.0025  p = 4.34e-01  
+
+======================================================================
+  4. LAYER 3 — BIAS CORRECTION
+======================================================================
+  RMSE before correction: 6.5755 min
+  RMSE after correction:  6.2237 min
+
+  ─── Per-Tier RMSE ───
+    large_chain         : 6.889 → 6.244  (+9.4%)
+    mid_independent     : 6.615 → 6.401  (+3.2%)
+    small_kiosk         : 5.938 → 5.754  (+3.1%)
+
+======================================================================
+  5. MODEL PERFORMANCE (with 95% Bootstrap CI)
+======================================================================
+
+  ─── Model: Baseline_XGBoost ───
+    MAE:          6.3034 min
+    RMSE:         7.7147 min
+    P50 AE:       5.5742 min
+    P90 AE:       12.4269 min
+    Rider Wait:   3.8185 min
+
+  ─── Model: SIREN_XGBoost ───
+    MAE:          2.6583 min
+    RMSE:         3.4067 min
+    P50 AE:       2.1817 min
+    P90 AE:       5.5386 min
+    Rider Wait:   1.1968 min
+
+  ─── Model: SIREN_LightGBM ───
+    MAE:          2.7343 min
+    RMSE:         3.4882 min
+    P50 AE:       2.2579 min
+    P90 AE:       5.6924 min
+    Rider Wait:   1.2360 min
+
+  SIREN XGBoost MAE 95% CI: [2.6098, 2.7060]
+
+======================================================================
+  6. IMPROVEMENT SUMMARY (Baseline → SIREN XGBoost)
+======================================================================
+    MAE         : 6.303 → 2.658  (+57.8%)
+    RMSE        : 7.715 → 3.407  (+55.8%)
+    P50_AE      : 5.574 → 2.182  (+60.9%)
+    P90_AE      : 12.427 → 5.539  (+55.4%)
+    RIDER_WAIT  : 3.818 → 1.197  (+68.7%)
+
+======================================================================
+  7. TOP 5 MOST IMPORTANT FEATURES (SIREN XGBoost)
+======================================================================
+    1. cuisine_base_kpt             importance=0.5585  (Layer 2)
+    2. order_complexity             importance=0.1323  (Base)
+    3. mean_marking_bias            importance=0.0566  (Layer 3)
+    4. google_busyness_index        importance=0.0476  (Layer 2)
+    5. complexity_kpt_penalty       importance=0.0459  (Layer 2)
+
+======================================================================
+  8. ABLATION STUDY — Incremental Layer Contributions
+======================================================================
+  Variant              Layers            MAE     RMSE      P50      P90
+  ──────────────────── ──────────── ──────── ──────── ──────── ────────
+  Baseline             nan             6.294    7.701    5.579   12.419
+  L1_Only              L1              6.187    7.536    5.499   12.336
+  L1_L2                L1+L2           3.194    3.986    2.713    6.586
+  Full_SIREN           L1+L2+L3        2.788    3.555    2.335    5.841
+
+  ─── Layer Contribution Breakdown ───
+    L1_Only: ΔMA = +0.107 min (+1.7% of baseline MAE)
+    L1_L2: ΔMA = +2.993 min (+47.6% of baseline MAE)
+    Full_SIREN: ΔMA = +0.406 min (+6.5% of baseline MAE)
+
+======================================================================
+  9. HYPERPARAMETER SENSITIVITY
+======================================================================
+  depth     lr  mcw   sub   col      MAE
+  ───── ────── ──── ───── ───── ────────
+      4  0.050    3  0.80  0.80   3.0347
+      6  0.050    5  0.80  0.80   2.8498
+      8  0.030    5  0.70  0.70   2.7900
+      6  0.100    3  0.90  0.90   2.7376
+      5  0.050    7  0.80  0.80   2.9279
+      7  0.030    5  0.80  0.80   2.8617
+      6  0.050    5  0.70  0.90   2.8492
+      5  0.080    3  0.85  0.85   2.8403
+
+  Best: depth=6, lr=0.1, mcw=3 → MAE=2.7376
+
+======================================================================
+  10. PER-CITY MAE BREAKDOWN
+======================================================================
+    Ahmedabad      : Baseline=7.279  SIREN=3.078  (+57.7%)
+    Bangalore      : Baseline=6.463  SIREN=2.701  (+58.2%)
+    Chennai        : Baseline=5.844  SIREN=2.952  (+49.5%)
+    Delhi          : Baseline=5.958  SIREN=2.596  (+56.4%)
+    Hyderabad      : Baseline=6.854  SIREN=2.497  (+63.6%)
+    Jaipur         : Baseline=6.192  SIREN=2.651  (+57.2%)
+    Kolkata        : Baseline=5.626  SIREN=2.415  (+57.1%)
+    Mumbai         : Baseline=6.619  SIREN=2.655  (+59.9%)
+    Pune           : Baseline=5.948  SIREN=2.651  (+55.4%)
+    Surat          : Baseline=5.548  SIREN=2.391  (+56.9%)
+
+======================================================================
+  11. PER-CUISINE MAE BREAKDOWN
+======================================================================
+    Biryani        : Baseline=11.249  SIREN=3.477  (+69.1%)
+    Burger         : Baseline=7.060  SIREN=2.334  (+66.9%)
+    Chinese        : Baseline=4.279  SIREN=2.587  (+39.6%)
+    Desserts       : Baseline=9.859  SIREN=2.451  (+75.1%)
+    Healthy        : Baseline=7.020  SIREN=2.457  (+65.0%)
+    Indian         : Baseline=5.646  SIREN=2.758  (+51.2%)
+    Mughlai        : Baseline=8.606  SIREN=2.742  (+68.1%)
+    Pizza          : Baseline=3.437  SIREN=2.349  (+31.6%)
+    South_Indian   : Baseline=3.649  SIREN=2.547  (+30.2%)
+    Thai           : Baseline=3.696  SIREN=2.569  (+30.5%)
+
+======================================================================
+  12. LIMITATIONS & FUTURE WORK
+======================================================================
+
+  LIMITATIONS:
+  1. SYNTHETIC DATA: All results are on synthetic data. The data-generating
+     process was designed to simulate realistic bias mechanisms, but real-world
+     performance may differ significantly due to unmeasured confounders.
+
+  2. PROXY FEATURES: Layer 2 enrichment features (rush_multiplier, rain_impact,
+     complexity_penalty) use domain-knowledge approximations with different
+     coefficients than the true data-generating process. This is deliberate
+     to prevent circular feature→target mapping, but means the features are
+     imperfect proxies — as they would be in production.
+
+  3. HIDDEN CONFOUNDERS: The data includes a hidden 'merchant_skill' factor
+     (0.75-1.25) that is NOT available to any model. This creates irreducible
+     prediction error (~2-3 min MAE floor), simulating real-world unmeasured
+     factors like chef skill, kitchen layout, and ingredient freshness.
+
+  4. TEMPORAL SPLIT ONLY: Models were evaluated on a single Nov-Dec 2024
+     holdout period. K-fold temporal cross-validation would provide more
+     robust performance estimates.
+
+  5. NO REAL-WORLD VALIDATION: Production deployment would require A/B
+     testing on live Zomato data with actual rider GPS and FOR timestamps.
+
+  FUTURE WORK:
+  - Validate on real Zomato/Swiggy FOR data if available
+  - Test with real Google Maps Popular Times API integration
+  - Implement online learning for Layer 3 bias adaptation
+  - Add confidence calibration (prediction intervals)
+  - Explore neural network architectures (LSTM for sequential orders)
+
+======================================================================
+  END OF REPORT
+======================================================================

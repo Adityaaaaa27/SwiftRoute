@@ -1,0 +1,41 @@
+feature,importance,layer,model
+cuisine_base_kpt,0.5584630370140076,Layer 2,SIREN_XGBoost
+order_complexity,0.13229763507843018,Base,SIREN_XGBoost
+mean_marking_bias,0.056617334485054016,Layer 3,SIREN_XGBoost
+google_busyness_index,0.04756113514304161,Layer 2,SIREN_XGBoost
+complexity_kpt_penalty,0.04590022191405296,Layer 2,SIREN_XGBoost
+zomato_concurrent_orders,0.02880248986184597,Base,SIREN_XGBoost
+rush_multiplier,0.02296343632042408,Layer 2,SIREN_XGBoost
+bias_offset,0.015294041484594345,Layer 3,SIREN_XGBoost
+rain_kpt_impact,0.01477858331054449,Layer 2,SIREN_XGBoost
+rain_flag,0.013448630459606647,Layer 2,SIREN_XGBoost
+is_lunch_rush,0.007842360064387321,Base,SIREN_XGBoost
+is_dinner_rush,0.0076530808582901955,Base,SIREN_XGBoost
+is_weekend,0.006886202841997147,Base,SIREN_XGBoost
+hour_cos,0.006138669326901436,Layer 2,SIREN_XGBoost
+relative_rush,0.006103196647018194,Layer 2,SIREN_XGBoost
+hour_sin,0.006066920701414347,Layer 2,SIREN_XGBoost
+dow_cos,0.005967616103589535,Layer 2,SIREN_XGBoost
+hour,0.005835344083607197,Base,SIREN_XGBoost
+dow_sin,0.005835176445543766,Layer 2,SIREN_XGBoost
+day_of_week,0.005544873420149088,Base,SIREN_XGBoost
+mean_marking_bias,5086.0,Layer 3,SIREN_LightGBM
+bias_offset,1974.0,Layer 3,SIREN_LightGBM
+cuisine_base_kpt,1868.0,Layer 2,SIREN_LightGBM
+zomato_concurrent_orders,1277.0,Base,SIREN_LightGBM
+rush_multiplier,1085.0,Layer 2,SIREN_LightGBM
+relative_rush,957.0,Layer 2,SIREN_LightGBM
+rain_kpt_impact,592.0,Layer 2,SIREN_LightGBM
+order_complexity,484.0,Base,SIREN_LightGBM
+hour,265.0,Base,SIREN_LightGBM
+day_of_week,243.0,Base,SIREN_LightGBM
+google_busyness_index,227.0,Layer 2,SIREN_LightGBM
+hour_sin,189.0,Layer 2,SIREN_LightGBM
+dow_sin,152.0,Layer 2,SIREN_LightGBM
+hour_cos,140.0,Layer 2,SIREN_LightGBM
+dow_cos,131.0,Layer 2,SIREN_LightGBM
+complexity_kpt_penalty,90.0,Layer 2,SIREN_LightGBM
+is_lunch_rush,55.0,Base,SIREN_LightGBM
+is_dinner_rush,29.0,Base,SIREN_LightGBM
+rain_flag,27.0,Layer 2,SIREN_LightGBM
+is_weekend,12.0,Base,SIREN_LightGBM

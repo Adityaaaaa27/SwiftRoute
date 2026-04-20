@@ -1,0 +1,79 @@
+{
+  "trained_at": "2026-04-17T21:18:30.121140",
+  "train_size": 91847,
+  "test_size": 8153,
+  "baseline_features": [
+    "hour",
+    "day_of_week",
+    "is_lunch_rush",
+    "is_dinner_rush",
+    "is_weekend",
+    "order_complexity",
+    "zomato_concurrent_orders"
+  ],
+  "siren_features": [
+    "hour",
+    "day_of_week",
+    "is_lunch_rush",
+    "is_dinner_rush",
+    "is_weekend",
+    "order_complexity",
+    "zomato_concurrent_orders",
+    "rush_multiplier",
+    "relative_rush",
+    "rain_flag",
+    "rain_kpt_impact",
+    "complexity_kpt_penalty",
+    "cuisine_base_kpt",
+    "hour_sin",
+    "hour_cos",
+    "dow_sin",
+    "dow_cos",
+    "google_busyness_index",
+    "mean_marking_bias",
+    "bias_offset"
+  ],
+  "best_hyperparams": {
+    "max_depth": 6,
+    "learning_rate": 0.1,
+    "min_child_weight": 3,
+    "subsample": 0.9,
+    "colsample_bytree": 0.9
+  },
+  "baseline_metrics": {
+    "mae": 6.3034,
+    "rmse": 7.7147,
+    "p50_ae": 5.5742,
+    "p90_ae": 12.4269,
+    "rider_wait": 3.8185
+  },
+  "siren_xgb_metrics": {
+    "mae": 2.6583,
+    "rmse": 3.4067,
+    "p50_ae": 2.1817,
+    "p90_ae": 5.5386,
+    "rider_wait": 1.1968
+  },
+  "siren_lgbm_metrics": {
+    "mae": 2.7343,
+    "rmse": 3.4882,
+    "p50_ae": 2.2579,
+    "p90_ae": 5.6924,
+    "rider_wait": 1.236
+  },
+  "baseline_tier_mae": {
+    "large_chain": 6.61,
+    "mid_independent": 6.4012,
+    "small_kiosk": 5.5832
+  },
+  "siren_xgb_tier_mae": {
+    "large_chain": 2.7292,
+    "mid_independent": 2.5785,
+    "small_kiosk": 2.7294
+  },
+  "siren_lgbm_tier_mae": {
+    "large_chain": 2.7217,
+    "mid_independent": 2.7141,
+    "small_kiosk": 2.8013
+  }
+}

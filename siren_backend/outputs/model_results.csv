@@ -1,0 +1,4 @@
+model,mae,rmse,p50_ae,p90_ae,rider_wait
+Baseline_XGBoost,6.3034,7.7147,5.5742,12.4269,3.8185
+SIREN_XGBoost,2.6583,3.4067,2.1817,5.5386,1.1968
+SIREN_LightGBM,2.7343,3.4882,2.2579,5.6924,1.236
